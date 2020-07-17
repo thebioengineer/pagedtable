@@ -1,3 +1,13 @@
+The pagedtable package as a whole is distributed under APL-2 (APACHE 
+LICENSE, Version 2).
+
+The pagedtable package includes other open source software components. The following
+is a list of these components (full copies of the license agreements used by
+these components are included below):
+
+- pagedtable.js, https://github.com/mlverse/pagedtablejs
+
+
 Apache License
 ==============
 
