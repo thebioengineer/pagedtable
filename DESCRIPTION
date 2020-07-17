@@ -1,12 +1,12 @@
 Package: pagedtable
 Type: Package
-Title: What the Package Does (Title Case)
+Title: pagedtable
 Version: 0.1.0
 Author: Who wrote it
 Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Description: This package provides bindings to the 'pagedtable.js' project, and tools for converting a
+ data.frame type object into a pagedtable widget.
+License: Apache License (>= 2.0)
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1

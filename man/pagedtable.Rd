@@ -7,21 +7,33 @@
 pagedtable(
   x,
   ...,
+  use_rownames = getOption("pagedtable.rownames.print"),
   width = "100\%",
   height = "400px",
   pagerows = 10,
-  shadowDOM = TRUE
+  shadowDOM = FALSE
 )
 }
 \arguments{
 \item{x}{data.frame to be passed to pagedtable}
 
-\item{...}{arguments to be passed}
+\item{...}{arguments to be passed to \code{\link{format}}}
+
+\item{use_rownames}{should rownames be displayed}
 
 \item{pagerows}{rows to display}
 
 \item{shadowDOM}{to or not use shadowdom}
 }
+\value{
+pagedtable htmlwidget
+}
 \description{
 main function for pagedtable
+}
+\examples{
+if(interactive()){
+  pagedtable(mtcars)
+}
+
 }

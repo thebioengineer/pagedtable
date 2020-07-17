@@ -5,17 +5,25 @@ HTMLWidgets.widget({
   type: "output",
 
   factory: function(el, width, height) {
+    var pagedtable_contents;
+    var pagedtable;
+
 
     // create our sigma object and bind it to the element
     return {
-
       renderValue: function(x) {
+        pagedtable_contents = x;
         // create table
-        // create table
-        var  pagedTable = new PagedTable(el.id, x);
-        pagedTable.init();
+        pagedtable = new PagedTable(el, pagedtable_contents);
+        pagedtable.init();
 
-      }
+      },
+
+      resize: function(width, height) {
+        pagedtable.updateView();
+      },
+
+      pt: pagedtable
     };
   }
 });

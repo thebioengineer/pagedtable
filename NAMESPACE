@@ -3,3 +3,4 @@
 export(pagedtable)
 export(pagedtableOutput)
 export(renderPagedTable)
+exportMethods(pagedtable_col)

@@ -2,53 +2,47 @@
 #' @export
 #'
 #' @param x data.frame to be passed to pagedtable
-#' @param ... arguments to be passed
+#' @param ... arguments to be passed to \code{\link{format}}
+#' @param use_rownames should rownames be displayed
 #' @param pagerows rows to display
-#' @param shadowDOM to or not use shadowdom
+#' @param shadowDOM to or not use shadowDOM. Default to TRUE
 #'
-pagedtable<- function(x, ..., width = "100%", height = "400px", pagerows = 10, shadowDOM = TRUE){
-  # read the data into json format
-  quiet <- capture.output({
-    dat_out <- data.frame(lapply(x,format,...))
-    rownames(dat_out) <- rownames(x)
-    data <- jsonlite::toJSON(dat_out)
-  })
+#' @return pagedtable htmlwidget
+#'
+#' @examples
+#' if(interactive()){
+#'   pagedtable(mtcars)
+#' }
+#'
+pagedtable <-
+  function(x,
+           ...,
+           use_rownames = getOption("pagedtable.rownames.print"),
+           pagerows = 10,
+           shadowDOM = TRUE) {
 
-  columns <- lapply(colnames(x), function(c_name){
-    c(name = c_name, type = class(x[[c_name]]), html = ifelse(class(x) == "color_vctr",TRUE,FALSE))
-  })
+  stopifnot(inherits(x, "data.frame"))
 
-  if (!is.null(rownames(x))) {
-    columns <- c(list(c(
-      label = "",
-      name = "_row",
-      type = "",
-      align = "left"
-    )),
-    columns)
-  }
+  x <- head(x, n = getOption("pagedtable.max.print", 1000))
 
-  options = list(
-    "rows" =  c(min = pagerows),
-    "shadowDOM" = shadowDOM
-  )
-
-  # pass the data and settings using 'x'
-  x <- list(
-    data = data,
-    columns = columns,
-    options = options
-  )
+  pagedtable_list <-
+    pagedtable_json(
+      x,
+      ...,
+      use_rownames = use_rownames,
+      pagerows = pagerows,
+      shadowDOM = shadowDOM
+    )
 
   # create the widget
-  htmlwidgets::createWidget("pagedtable", x, width = width, height = height)
+  htmlwidgets::createWidget("pagedtable", pagedtable_list)
 
 }
 
 
 #' @export
-pagedtableOutput <- function(outputId, width = "100%", height = "400px") {
-  shinyWidgetOutput(outputId, "pagedtable",width, height, package = "pagedtable")
+pagedtableOutput <- function(outputId, width = "100%") {
+  shinyWidgetOutput(outputId, "pagedtable",width, package = "pagedtable")
 }
 
 #' @export
