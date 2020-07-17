@@ -1,0 +1,21 @@
+---
+title: "pagedtable POC"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r}
+
+library(dplyr)
+library(colortable)
+library(pagedtable)
+
+pagedtable(mtcars, shadowDOM = TRUE)
+
+mtcars2 <- mtcars
+mtcars2$mpg <- color_vctr(mtcars2$mpg, text_color = color_scale("Blues"))
+pagedtable(mtcars2, pagerows = 10)
+
+```
+

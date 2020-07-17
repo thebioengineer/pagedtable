@@ -1,0 +1,6 @@
+dependencies:
+  - name: pagedtable
+    version: 1.0.0
+    src: htmlwidgets/lib/pagedtablejs
+    script:
+      - pagedtable.js
