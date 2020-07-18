@@ -14,7 +14,7 @@ HTMLWidgets.widget({
       renderValue: function(x) {
         pagedtable_contents = x;
         // create table
-        pagedtable = new PagedTable(el, pagedtable_contents);
+        pagedtable = new PagedTable(el.id, pagedtable_contents);
         pagedtable.init();
 
       },

@@ -17,6 +17,8 @@
 pagedtable <-
   function(x,
            ...,
+           width = "100%",
+           height = "auto",
            use_rownames = getOption("pagedtable.rownames.print"),
            pagerows = 10,
            shadowDOM = TRUE) {
@@ -35,14 +37,19 @@ pagedtable <-
     )
 
   # create the widget
-  htmlwidgets::createWidget("pagedtable", pagedtable_list)
+  htmlwidgets::createWidget(
+    name = "pagedtable",
+    x = pagedtable_list,
+    height = height,
+    width = width,
+    package = "pagedtable")
 
 }
 
 
 #' @export
 pagedtableOutput <- function(outputId, width = "100%") {
-  shinyWidgetOutput(outputId, "pagedtable",width, package = "pagedtable")
+  shinyWidgetOutput(outputId, "pagedtable", width, package = "pagedtable", )
 }
 
 #' @export

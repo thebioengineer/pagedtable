@@ -1,7 +1,8 @@
 ---
 title: "pagedtable POC"
-output: html_notebook
-editor_options: 
+output:
+  html_document
+editor_options:
   chunk_output_type: inline
 ---
 
@@ -11,7 +12,8 @@ library(dplyr)
 library(colortable)
 library(pagedtable)
 
-pagedtable(mtcars, shadowDOM = TRUE)
+pagedtable(mtcars)
+
 ```
 
 
