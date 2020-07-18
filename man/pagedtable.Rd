@@ -7,11 +7,11 @@
 pagedtable(
   x,
   ...,
-  use_rownames = getOption("pagedtable.rownames.print"),
   width = "100\%",
-  height = "400px",
+  height = "auto",
+  use_rownames = getOption("pagedtable.rownames.print"),
   pagerows = 10,
-  shadowDOM = FALSE
+  shadowDOM = TRUE
 )
 }
 \arguments{
@@ -23,7 +23,7 @@ pagedtable(
 
 \item{pagerows}{rows to display}
 
-\item{shadowDOM}{to or not use shadowdom}
+\item{shadowDOM}{to or not use shadowDOM. Default to TRUE}
 }
 \value{
 pagedtable htmlwidget

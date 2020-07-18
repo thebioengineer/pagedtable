@@ -2,9 +2,15 @@
 % Please edit documentation in R/pagedtable_col.R
 \name{pagedtable_col}
 \alias{pagedtable_col}
-\title{Set PagedTable behavior for columns}
+\alias{pagedtable_col.default}
+\alias{pagedtable_col.list}
+\title{Set pagedtable behavior for columns}
 \usage{
 pagedtable_col(x, name = substitute(x), ...)
+
+\method{pagedtable_col}{default}(x, name = substitute(x), ...)
+
+\method{pagedtable_col}{list}(x, name = substitute(x), ...)
 }
 \arguments{
 \item{x}{vector to be parsed}
@@ -18,4 +24,21 @@ list containing two elements, the formatted column, and a series of options
 \description{
 Table column behavior may need to be defined for new/custom s3 vector types.
 This s3 method allows for that to be defined!
+}
+\section{Methods (by class)}{
+\itemize{
+\item \code{default}: default method for printing column content
+
+\item \code{list}: list method for printing out list-cols
+}}
+
+\examples{
+
+## normal vectors
+vector_columns <- pagedtable_col(LETTERS)
+
+## cases like list_col's that are in tibbles
+my_list_col <- list(list(1234),"myvalue")
+list_columns <- pagedtable_col(my_list_col)
+
 }

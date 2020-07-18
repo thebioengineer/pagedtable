@@ -10,7 +10,8 @@ pagedtable_json <- function(x,
                                function(name, x){
                                  pagedtable_col(
                                    x = x[[name]],
-                                   name = name
+                                   name = name,
+                                   ...
                                  )
                                },x)
 

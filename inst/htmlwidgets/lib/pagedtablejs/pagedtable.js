@@ -300,6 +300,51 @@ a.pagedtable-index-current:hover {\
   font-style: italic;\
   opacity: 0.3;\
 }\
+.pagedtable-tooltip {\
+  position: relative;\
+  display: inline-block;\
+}\
+\
+.pagedtable-tooltip .pagedtable-tooltip-text {\
+  visibility: hidden;\
+  background-color: #555;\
+  color: #fff;\
+  text-align: center;\
+  padding: 5px 0;\
+  border-radius: 6px;\
+\
+  /* Position the tooltip text */\
+  position: absolute;\
+  z-index: 1;\
+  margin-left: -60px;\
+\
+  /* Fade in tooltip */\
+  opacity: 0;\
+  transition: opacity 0.3s;\
+}\
+\
+/* Tooltip arrow */\
+.pagedtable-tooltip .pagedtable-tooltip-text::after {\
+  content: ''\
+  position: absolute;\
+  top: 100%;\
+  left: 50%;\
+  margin-left: -5px;\
+  border-width: 5px;\
+  border-style: solid;\
+  border-color: #555 transparent transparent transparent;\
+}\
+\
+/* Show the tooltip text when you mouse over the tooltip container */\
+.pagedtable-tooltip:hover .pagedtable-tooltip-text {\
+  visibility: visible;\
+  opacity: 1;\
+}\
+\
+\
+.pagedtable td div {\
+  margin-left: auto;\
+}\
 ";
 
 var PagedTable = function (pagedTable, source) {
@@ -1694,6 +1739,9 @@ var PagedTableDoc;
 
 window.onload = function() {
   PagedTableDoc.initAll();
+  document.querySelectorAll(".pagedtable-tooltip-text").forEach(function(ktooltip, index){                // For each ktooltip
+    pagedtable_tooltip_text.addEventListener("mouseover", pt_position_tooltip); // On hover, launch the function below
+  })
 };
 
 pagedtable = {
@@ -1703,3 +1751,29 @@ pagedtable = {
     return dataframe;
   }
 };
+
+function pt_position_tooltip(){
+  // Get .ktooltiptext sibling
+  var tooltip = this.parentNode.querySelector(".pagedtable-tooltip-text");
+
+  // Get calculated ktooltip coordinates and size
+  var pt_tooltip_rect = this.getBoundingClientRect();
+
+  var tipX = pt_tooltip_rect.width + 5; // 5px on the right of the ktooltip
+  var tipY = -40;                     // 40px on the top of the ktooltip
+  // Position tooltip
+  tooltip.style.top = tipY + 'px';
+  tooltip.style.left = tipX + 'px';
+
+  // Get calculated tooltip coordinates and size
+  var tooltip_rect = tooltip.getBoundingClientRect();
+  // Corrections if out of window
+  if ((tooltip_rect.x + tooltip_rect.width) > window.innerWidth) // Out on the right
+    tipX = -tooltip_rect.width - 5;  // Simulate a "right: tipX" position
+  if (tooltip_rect.y < 0)            // Out on the top
+    tipY = tipY - tooltip_rect.y;    // Align on the top
+
+  // Apply corrected position
+  tooltip.style.top = tipY + 'px';
+  tooltip.style.left = tipX + 'px';
+}

@@ -1,5 +1,6 @@
 #' main function for pagedtable
 #' @export
+#' @importFrom htmlwidgets createWidget sizingPolicy
 #'
 #' @param x data.frame to be passed to pagedtable
 #' @param ... arguments to be passed to \code{\link{format}}
@@ -37,12 +38,18 @@ pagedtable <-
     )
 
   # create the widget
-  htmlwidgets::createWidget(
+  createWidget(
     name = "pagedtable",
     x = pagedtable_list,
     height = height,
     width = width,
+    sizingPolicy = sizingPolicy(
+      defaultWidth = "100%",
+      defaultHeight = "auto"
+    ),
     package = "pagedtable")
+
+
 
 }
 
@@ -58,5 +65,30 @@ renderPagedTable <- function(expr, env = parent.frame(), quoted = FALSE){
   shinyRenderWidget(expr, pagedtableOutput, env, quoted = TRUE)
 }
 
+pagedtable_selfcontained <- function(x,
+                                     ...,
+                                     width = "100%",
+                                     height = "auto",
+                                     use_rownames = getOption("pagedtable.rownames.print"),
+                                     pagerows = 10,
+                                     shadowDOM = TRUE) {
+  x <- head(x, n = getOption("pagedtable.max.print", 1000))
 
+  pagedtable_list <-
+    pagedtable_json(
+      x,
+      ...,
+      use_rownames = use_rownames,
+      pagerows = pagerows,
+      shadowDOM = shadowDOM
+    )
 
+  paste(
+    "<div data-pagedtable=\"false\">",
+    "  <script data-pagedtable-source type=\"application/json\">",
+    jsonlite::toJSON(data),
+    "  </script>",
+    "</div>",
+    sep = "\n"
+  )
+}

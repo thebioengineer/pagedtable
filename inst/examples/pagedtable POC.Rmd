@@ -1,19 +1,22 @@
 ---
-title: "pagedtable POC"
+title: "pagedtable Example!"
 output:
   html_document
 editor_options:
-  chunk_output_type: inline
+  chunk_output_type: console
 ---
 
-```{r}
+```{r setup}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE,message = FALSE)
+```
 
+```{r}
 library(dplyr)
 library(colortable)
 library(pagedtable)
 
-pagedtable(mtcars)
-
+z <- pagedtable(mtcars)
+z
 ```
 
 
@@ -51,3 +54,25 @@ pagedtable(mtcars2, pagerows = 10)
 
 
 ```
+```{r}
+
+library(dplyr)
+library(colortable)
+library(pagedtable)
+
+mtcars_grouped <- mtcars %>% 
+  group_by(cyl) %>% 
+  summarise(
+    cars = list(data.frame(
+      cars = .data$cars,
+      mpg = .data$mpg,
+      disp = .data$disp
+    )),
+    mean_mpg = mean(mpg),
+    mean_disp = mean(disp)
+  )
+
+pagedtable(mtcars_grouped, use_rownames = FALSE)
+
+```
+

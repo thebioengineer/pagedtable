@@ -61,6 +61,7 @@ paged_table_is_vector_s3 <- function(x) {
          POSIXct = TRUE,
          difftime = TRUE,
          data.frame = TRUE,
+         tbl_df = TRUE,
          !is.object(x) && is_vector(x))
 }
 
@@ -70,14 +71,48 @@ size_sum <- function(x) {
   paste0(" [", dim_desc(x), "]" )
 }
 
-obj_sum.default <- function(x) {
-  paste0(type_sum(x), size_sum(x))
+table_tooltip <- function(x){
+
+  n_col <- ncol(x)
+  n_row <- nrow(x)
+
+  ncol_disp <- min(n_col,3)
+  nrow_disp <- min(n_row,3)
+
+  x_sub <- x[1:nrow_disp, 1:ncol_disp]
+
+  thead <- paste0("<thead><tr>",
+                  paste0("<td>",colnames(x_sub),"</td>", collapse = ""),
+                  "</tr></thead>")
+
+  tbody <- do.call(paste,c("<tbody>",lapply(1:nrow_disp,function(r){
+    paste0("<tr>",
+           paste(sapply(1:ncol_disp, function(col_){
+                  paste0("<td>",format(x_sub[[col_]][[r]], method = "html"),"</td>")
+           }), collapse = ""),
+      "</tr>")
+  }),"</tbody>",collapse = ""))
+
+  tfooter <- NULL
+
+  if(n_row > nrow_disp){
+    tfooter <- paste("...with",n_row - nrow_disp,"more rows")
+  }
+
+  if(n_col > ncol_disp){
+
+    remaining_col_types <- sapply(as.list(x)[(ncol_disp + 1):n_col],type_sum)
+
+    tfooter <- paste0(
+      tfooter,
+      ifelse(is.null(tfooter),"...with ",", and "),
+      n_col - ncol_disp," more variables: ",
+      paste0(names(remaining_col_types),
+            " &lt",remaining_col_types,"&gt", collapse = ", ")
+    )
+  }
+
+  paste("<div style = 'width:300px'><div style = 'background-color: lightgrey;overflow:auto;width:fit-content;margin:auto;'><table>",thead,tbody,"</table></div>","<p style='text-align:left;margin:4px'>",tfooter,"</p></div>")
+
 }
 
-obj_sum <- function(x) {
-  switch(class(x)[[1]],
-         POSIXlt = rep("POSIXlt", length(x)),
-         list = vapply(x, obj_sum.default, character(1L)),
-         paste0(type_sum(x), size_sum(x))
-  )
-}
