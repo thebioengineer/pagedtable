@@ -446,7 +446,7 @@ var PagedTable = function (pagedTable, source) {
       //populate with missing
 
       for( var idx = 0; idx < missingKeys.length; idx++) {
-        source.columns.push({name: missingKeys[idx], html: false. isWidget: false});
+        source.columns.push({name: missingKeys[idx], html: false, isWidget: false});
         existingKeys.push(missingKeys[idx]);
       }
 
@@ -1070,12 +1070,14 @@ var PagedTable = function (pagedTable, source) {
         if(columns.widths[Object.keys(columns.widths)[column_idx]].isWidget){
           reviveHTMLWidget(el);
         }
+
       });
 
       me.styleColumn("col_" + column_idx,{
         opacity:0,
         transition: "",
       })
+    }
 
   };
 
@@ -1094,6 +1096,8 @@ var PagedTable = function (pagedTable, source) {
 
           var widget_data = JSON.parse(widget_data.textContent || widget_data.text);
 
+          widget.className = widget.className + " html-widget-static-bound";
+
           initResult = binding.initialize(widget,widget.offsetWidth, widget.offsetHeight )
           widget["htmlwidget_data_" + "initResult"] = initResult
 
@@ -1103,6 +1107,7 @@ var PagedTable = function (pagedTable, source) {
             window.HTMLWidgets.evaluateStringMember(widget_data.x, widget_data.evals[k]);
           };
           binding.renderValue(widget, widget_data.x, initResult);
+          evalAndRun(widget_data.jsHooks.render, initResult, [widget, widget_data.x]);
   };
 
   var forEachDir = function(array, direction, func){
@@ -1796,3 +1801,41 @@ pagedtable = {
     return dataframe;
   }
 };
+
+  // IE8 doesn't support Array.forEach.
+  function forEach(values, callback, thisArg) {
+    if (values.forEach) {
+      values.forEach(callback, thisArg);
+    } else {
+      for (var i = 0; i < values.length; i++) {
+        callback.call(thisArg, values[i], i, values);
+      }
+    }
+  }
+  // @param tasks Array of strings (or falsy value, in which case no-op).
+  //   Each element must be a valid JavaScript expression that yields a
+  //   function. Or, can be an array of objects with "code" and "data"
+  //   properties; in this case, the "code" property should be a string
+  //   of JS that's an expr that yields a function, and "data" should be
+  //   an object that will be added as an additional argument when that
+  //   function is called.
+  // @param target The object that will be "this" for each function
+  //   execution.
+  // @param args Array of arguments to be passed to the functions. (The
+  //   same arguments will be passed to all functions.)
+  function evalAndRun(tasks, target, args) {
+    if (tasks) {
+      forEach(tasks, function(task) {
+        var theseArgs = args;
+        if (typeof(task) === "object") {
+          theseArgs = theseArgs.concat([task.data]);
+          task = task.code;
+        }
+        var taskFunc = tryEval(task);
+        if (typeof(taskFunc) !== "function") {
+          throw new Error("Task must be a function! Source:\n" + task);
+        }
+        taskFunc.apply(target, theseArgs);
+      });
+    }
+  }
