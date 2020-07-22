@@ -36,7 +36,7 @@ pagedtable_col.color_vctr <- function(x, name = substitute(x), ...) {
 
   list(
     content = col_values,
-    columns = c(
+    columns = list(
       name  = name,
       label = name,
       type  = vctrs::vec_ptype_abbr(x),
@@ -47,7 +47,5 @@ pagedtable_col.color_vctr <- function(x, name = substitute(x), ...) {
 }
 
 pagedtable(mtcars2, pagerows = 10)
-
-
 
 ```

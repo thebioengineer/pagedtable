@@ -40,16 +40,18 @@ pagedtable <-
   htmlwidgets::createWidget(
     name = "pagedtable",
     x = pagedtable_list,
-    height = height,
+    package = "pagedtable",
+    ...,
     width = width,
-    package = "pagedtable")
+    height = height,
+    )
 
 }
 
 
 #' @export
 pagedtableOutput <- function(outputId, width = "100%") {
-  shinyWidgetOutput(outputId, "pagedtable", width, package = "pagedtable", )
+  shinyWidgetOutput(outputId, "pagedtable",width, package = "pagedtable")
 }
 
 #' @export
