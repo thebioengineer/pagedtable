@@ -10,7 +10,8 @@ pagedtable_json <- function(x,
                                function(name, x){
                                  pagedtable_col(
                                    x = x[[name]],
-                                   name = name
+                                   name = name,
+                                   ...
                                  )
                                },x)
 
@@ -20,7 +21,7 @@ pagedtable_json <- function(x,
   if(use_rownames){
     formatted_contents <- c(list("_rn_" = list(
       content = rownames(x),
-      columns = c(
+      columns = list(
         label = "",
         name = "_rn_",
         type = "",
@@ -38,7 +39,7 @@ pagedtable_json <- function(x,
   names(columns) <- NULL
 
   options = list(
-    "rows" =  c(min = pagerows),
+    "rows" =  list(min = pagerows),
     "shadowDOM" = shadowDOM
   )
 

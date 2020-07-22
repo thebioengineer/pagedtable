@@ -31,7 +31,7 @@ pagedtable_col.default <- function(x, name = substitute(x), ...){
 
   list(
     content = col_values,
-    columns = c(
+    columns = list(
       name  = name,
       label = name,
       type  = type,
@@ -41,11 +41,11 @@ pagedtable_col.default <- function(x, name = substitute(x), ...){
 }
 
 pagedtable_col.list <- function(x, name = substitute(x), ...) {
-  col_values <-
+  col_values <- do.call('c',
     lapply(x, function(x_list) {
       summary <- obj_sum(x_list)
       paste0("<", summary, ">")
-    })
+    }))
 
   baseType <- class(x)[[1]]
   type <- type_sum(x)
@@ -53,12 +53,11 @@ pagedtable_col.list <- function(x, name = substitute(x), ...) {
 
   list(
     content = col_values,
-    columns = c(
+    columns = list(
       name  = name,
       label = name,
       type  = type,
       align = align
     )
   )
-
 }
