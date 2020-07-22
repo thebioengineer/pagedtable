@@ -6,6 +6,7 @@
 \alias{obj_summary.POSIXlt}
 \alias{obj_summary.list}
 \alias{obj_summary.data.frame}
+\alias{obj_summary.htmlwidget}
 \title{Define how to summarize objects that are contents of list cols}
 \usage{
 obj_summary(x, ...)
@@ -17,6 +18,8 @@ obj_summary(x, ...)
 \method{obj_summary}{list}(x, ...)
 
 \method{obj_summary}{data.frame}(x, ..., tooltip = TRUE)
+
+\method{obj_summary}{htmlwidget}(x, ...)
 }
 \arguments{
 \item{x}{list element to be parsed}
@@ -39,6 +42,8 @@ types. This is an option for how to summarize those object types.
 \item \code{list}: list method, calculates the typesum and size, summarizes
 
 \item \code{data.frame}: data.frame method, reports data.frame size and optionally makes a tooltip for hovering.
+
+\item \code{htmlwidget}: htmlwidget method, converts to a character string representation of the widget
 }}
 
 \examples{

@@ -28,19 +28,31 @@ obj_summary <- function(x, ...) {
 #' @describeIn  obj_summary default method, reports object type and dimensions
 #' @export
 obj_summary.default <- function(x, ...){
-  paste0(type_sum(x), size_sum(x))
+  summary <- paste0(type_sum(x), size_sum(x))
+  list(
+    value = summary,
+    deps = NULL
+  )
 }
 
 #' @export
 #' @describeIn obj_summary POSIXlt method, reports number of POSIXlt
 obj_summary.POSIXlt <- function(x, ...){
-  rep("POSIXlt", length(x))
+  summary <- rep("POSIXlt", length(x))
+  list(
+    value = summary,
+    deps = NULL
+  )
 }
 
 #' @export
 #' @describeIn obj_summary list method, calculates the typesum and size, summarizes
 obj_summary.list <- function(x,...){
-  vapply(x, function(x){paste0(type_sum(x), size_sum(x))}, character(1L))
+  summary <- vapply(x, function(x){paste0(type_sum(x), size_sum(x))}, character(1L))
+  list(
+    value = summary,
+    deps = NULL
+  )
 }
 
 #' @describeIn obj_summary data.frame method, reports data.frame size and optionally makes a tooltip for hovering.
@@ -57,5 +69,33 @@ obj_summary.data.frame <- function(x, ..., tooltip = TRUE) {
       "</div>"
     )
   }
-  summary
+
+  list(
+    value = summary,
+    deps = NULL
+  )
+}
+
+#' @describeIn obj_summary htmlwidget method, converts to a character string representation of the widget
+#' @export
+#' @importFrom htmltools as.tags htmlDependencies
+#' @importFrom htmlwidgets getDependency
+obj_summary.htmlwidget <- function(x, ...){
+
+  value <- paste("<div class='htmlwidget_container'>",
+                 as.character(htmltools::as.tags(x)),
+                 "</div>")
+
+  # get dependencies
+  deps <- htmlDependencies(x)
+  if(is.null(deps)){
+    package <- attr(x, "package")
+    widget <- attr(x, "class")[1]
+    deps <- getDependency(widget, package = package)
+  }
+
+  list(
+    value = value,
+    deps = deps
+  )
 }

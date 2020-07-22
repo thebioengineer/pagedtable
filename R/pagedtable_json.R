@@ -21,25 +21,29 @@ pagedtable_json <- function(x,
   if(use_rownames){
     formatted_contents <- c(list("_rn_" = list(
       content = rownames(x),
-      columns = c(
+      columns = list(
         label = "",
         name = "_rn_",
         type = "",
         align = "left"
-      )
+      ),
+      dependencies = NULL
     )),
     formatted_contents)
   }
 
   data <- jsonlite::toJSON(
-    data.frame(lapply(formatted_contents, `[[`, 'content'),check.names = FALSE)
+    data.frame(lapply(formatted_contents, `[[`, 'content'), check.names = FALSE)
   )
 
   columns <- lapply(formatted_contents, `[[`, 'columns')
   names(columns) <- NULL
 
+  dependencies <- unique(
+    do.call('c',lapply(formatted_contents, `[[`, 'dependencies')))
+
   options = list(
-    "rows" =  c(min = pagerows),
+    "rows" =  list(min = pagerows),
     "shadowDOM" = shadowDOM
   )
 
@@ -47,6 +51,7 @@ pagedtable_json <- function(x,
   list(
     data = data,
     columns = columns,
-    options = options
+    options = options,
+    dependencies = dependencies
   )
 }

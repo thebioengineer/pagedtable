@@ -34,12 +34,13 @@ pagedtable_col.default <- function(x, name = substitute(x), ...){
 
   list(
     content = col_values,
-    columns = c(
+    columns = list(
       name  = name,
       label = name,
       type  = type,
       align = align
-      )
+      ),
+    dependencies = NULL
   )
 }
 
@@ -47,9 +48,16 @@ pagedtable_col.default <- function(x, name = substitute(x), ...){
 #' @describeIn pagedtable_col list method for printing out list-cols
 pagedtable_col.list <- function(x, name = substitute(x), ...) {
 
-  col_values <- do.call('c',lapply(x, obj_summary))
+  summaries <- lapply(x, obj_summary)
 
-  html <- any(sapply(x, is.data.frame))
+  col_values <- do.call('c',lapply(summaries, `[[`,"value"))
+
+  dependencies <- unique(do.call('c',lapply(summaries, `[[`,"deps")))
+
+  html <- any(sapply(x, is_html_content))
+  widget <- any(sapply(x, is_widget))
+
+
 
   baseType <- class(x)[[1]]
   type <- type_sum(x)
@@ -57,13 +65,14 @@ pagedtable_col.list <- function(x, name = substitute(x), ...) {
 
   list(
     content = col_values,
-    columns = c(
+    columns = list(
       name  = name,
       label = name,
       type  = type,
       align = align,
-      html = html
-    )
+      html = html,
+      isWidget = widget
+    ),
+    dependencies = dependencies
   )
-
 }

@@ -1,6 +1,7 @@
 #' main function for pagedtable
 #' @export
 #' @importFrom htmlwidgets createWidget sizingPolicy
+#' @importFrom htmltools attachDependencies
 #'
 #' @param x data.frame to be passed to pagedtable
 #' @param ... arguments to be passed to \code{\link{format}}
@@ -38,25 +39,37 @@ pagedtable <-
     )
 
   # create the widget
-  createWidget(
+  pt_widget <- createWidget(
     name = "pagedtable",
-    x = pagedtable_list,
+    x = pagedtable_list[1:3],
+    ...,
     height = height,
     width = width,
     sizingPolicy = sizingPolicy(
       defaultWidth = "100%",
-      defaultHeight = "auto"
+      defaultHeight = "auto",
+      viewer.fill = FALSE,
+      knitr.figure = FALSE
     ),
     package = "pagedtable")
 
 
+  if(!is.null(pagedtable_list[[4]])){
+    pt_widget$dependencies <-
+      unique(c(
+        pt_widget$dependencies,
+        pagedtable_list[[4]]
+      ))
+  }
+
+  pt_widget
 
 }
 
 
 #' @export
 pagedtableOutput <- function(outputId, width = "100%") {
-  shinyWidgetOutput(outputId, "pagedtable", width, package = "pagedtable", )
+  shinyWidgetOutput(outputId, "pagedtable", width, package = "pagedtable")
 }
 
 #' @export

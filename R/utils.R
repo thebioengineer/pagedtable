@@ -116,3 +116,11 @@ table_tooltip <- function(x){
 
 }
 
+is_html_content <- function(x){
+  any(c("htmlwidget","data.frame") %in% class(x))
+}
+
+
+is_widget <- function(x){
+  any(c("htmlwidget") %in% class(x))
+}

@@ -418,7 +418,7 @@ var PagedTable = function (pagedTable, source) {
       var columns = [];
       var keys = Object.keys(source.data[0]);
       for (var idx = 0; idx < keys.length; idx++) {
-        columns[idx] = { name: keys[idx], html: false};
+        columns[idx] = { name: keys[idx], html: false, isWidget: false};
       }
 
       source.columns = columns;
@@ -427,7 +427,7 @@ var PagedTable = function (pagedTable, source) {
     else if (typeof(source.columns[0].length) !== "undefined") {
       var columns = []
       for (var idx = 0; idx < source.columns.length; idx++) {
-        columns[idx] = { name: source.columns[idx], html: false };
+        columns[idx] = { name: source.columns[idx], html: false, isWidget: false };
       }
 
       source.columns = columns;
@@ -446,7 +446,7 @@ var PagedTable = function (pagedTable, source) {
       //populate with missing
 
       for( var idx = 0; idx < missingKeys.length; idx++) {
-        source.columns.push({name: missingKeys[idx], html: false});
+        source.columns.push({name: missingKeys[idx], html: false. isWidget: false});
         existingKeys.push(missingKeys[idx]);
       }
 
@@ -461,9 +461,16 @@ var PagedTable = function (pagedTable, source) {
     }
 
     //every column must have the label and the html designation
-    for (var idx = 0; idx < source.data[0].length; idx ++) {
+    for (var idx = 0; idx < source.columns.length; idx ++) {
       if (typeof(source.columns[idx].html) === "undefined"){
         source.columns[idx].html = false;
+      }
+    }
+
+    //every column must have the label and the html designation
+    for (var idx = 0; idx < source.columns.length; idx ++) {
+      if (typeof(source.columns[idx].isWidget) === "undefined"){
+        source.columns[idx].isWidget = false;
       }
     }
 
@@ -503,16 +510,24 @@ var PagedTable = function (pagedTable, source) {
   }(source);
 
   // function that will convert a text entry (as is) into an html element or preserve it as text
-  var makeCellContents = function(entry){
+  var makeCellContents = function(entry, is_widget){
     var cellContents
-    var sanitized = DOMPurify.sanitize(entry);
+
+    if(!is_widget){
+      var sanitized = DOMPurify.sanitize(entry);
+    }else{
+      var sanitized = entry
+    }
+
+    var container = document.createElement("div")
 
     if(sanitized.length === 0){
       cellContents = document.createTextNode(entry);
+      container.appendChild(cellContents);
     } else {
-      cellContents = sanitized;
+      container.innerHTML = sanitized;
     }
-    return(cellContents);
+    return(container);
   };
 
   // function that when invoked determines what the
@@ -722,7 +737,9 @@ var PagedTable = function (pagedTable, source) {
           // width adding outer styles like padding
           outer: maxChars * measures.character + measures.padding,
           // Is width based on internal html
-          html: column.html
+          html: column.html === "true",
+          //is this a widgetwith allowable htmlCell
+          isWidget: column.isWidget === "true"
         };
       });
     };
@@ -933,7 +950,7 @@ var PagedTable = function (pagedTable, source) {
       cellText.style.width = "fit-content"
 
       if(columns.widths[idx_name].html){
-        cellText.innerHTML = makeCellContents(dataCell)
+        cellText.appendChild(makeCellContents(dataCell, columns.widths[idx_name].isWidget))
       }else{
         var cellText = document.createTextNode(dataCell);
       }
@@ -1041,21 +1058,51 @@ var PagedTable = function (pagedTable, source) {
       }
 
       body_elements.map(function(el, idxRow){
-        var row = pt_body.querySelector(".row_"+idxRow)
 
+        var row = pt_body.querySelector(".row_"+idxRow)
         if(backwards){
           row.querySelector(".right-navigator-column").after(el);
         } else{
           row.querySelector(".left-navigator-column").before(el);
         }
-      })
+
+        //if is widget column, try to revive widget
+        if(columns.widths[Object.keys(columns.widths)[column_idx]].isWidget){
+          reviveHTMLWidget(el);
+        }
+      });
 
       me.styleColumn("col_" + column_idx,{
         opacity:0,
         transition: "",
       })
-    }
 
+  };
+
+  var reviveHTMLWidget = function(el){
+          var widget = el.querySelector(".html-widget");
+          var widget_id = widget.id;
+          var widget_data = el.querySelector("script[data-for='" + widget_id + "'][type='application/json']");
+          var widget_binding_class = widget.classList[0]
+
+          var binding_idx = []
+          window.HTMLWidgets.widgets.forEach(function(b){
+            binding_idx.push(b.name);
+          })
+
+          var binding = window.HTMLWidgets.widgets[binding_idx.indexOf(widget_binding_class)]
+
+          var widget_data = JSON.parse(widget_data.textContent || widget_data.text);
+
+          initResult = binding.initialize(widget,widget.offsetWidth, widget.offsetHeight )
+          widget["htmlwidget_data_" + "initResult"] = initResult
+
+          // Resolve strings marked as javascript literals to objects
+          if (!(widget_data.evals instanceof Array)) widget_data.evals = [widget_data.evals];
+          for (var k = 0; widget_data.evals && k < widget_data.evals.length; k++) {
+            window.HTMLWidgets.evaluateStringMember(widget_data.x, widget_data.evals[k]);
+          };
+          binding.renderValue(widget, widget_data.x, initResult);
   };
 
   var forEachDir = function(array, direction, func){
@@ -1739,10 +1786,8 @@ var PagedTableDoc;
 
 window.onload = function() {
   PagedTableDoc.initAll();
-  document.querySelectorAll(".pagedtable-tooltip-text").forEach(function(ktooltip, index){                // For each ktooltip
-    pagedtable_tooltip_text.addEventListener("mouseover", pt_position_tooltip); // On hover, launch the function below
-  })
 };
+
 
 pagedtable = {
   create: function(dataframe, element, options) {
@@ -1751,29 +1796,3 @@ pagedtable = {
     return dataframe;
   }
 };
-
-function pt_position_tooltip(){
-  // Get .ktooltiptext sibling
-  var tooltip = this.parentNode.querySelector(".pagedtable-tooltip-text");
-
-  // Get calculated ktooltip coordinates and size
-  var pt_tooltip_rect = this.getBoundingClientRect();
-
-  var tipX = pt_tooltip_rect.width + 5; // 5px on the right of the ktooltip
-  var tipY = -40;                     // 40px on the top of the ktooltip
-  // Position tooltip
-  tooltip.style.top = tipY + 'px';
-  tooltip.style.left = tipX + 'px';
-
-  // Get calculated tooltip coordinates and size
-  var tooltip_rect = tooltip.getBoundingClientRect();
-  // Corrections if out of window
-  if ((tooltip_rect.x + tooltip_rect.width) > window.innerWidth) // Out on the right
-    tipX = -tooltip_rect.width - 5;  // Simulate a "right: tipX" position
-  if (tooltip_rect.y < 0)            // Out on the top
-    tipY = tipY - tooltip_rect.y;    // Align on the top
-
-  // Apply corrected position
-  tooltip.style.top = tipY + 'px';
-  tooltip.style.left = tipX + 'px';
-}
