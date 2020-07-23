@@ -1,11 +1,15 @@
 #' main function for pagedtable
 #' @export
+#' @importFrom htmlwidgets createWidget sizingPolicy
+#' @importFrom htmltools attachDependencies
+#' @importFrom utils head
 #'
 #' @param x data.frame to be passed to pagedtable
 #' @param ... arguments to be passed to \code{\link{format}}
 #' @param use_rownames should rownames be displayed
 #' @param pagerows rows to display
 #' @param shadowDOM to or not use shadowDOM. Default to TRUE
+#' @inheritParams htmlwidgets::createWidget
 #'
 #' @return pagedtable htmlwidget
 #'
@@ -37,28 +41,30 @@ pagedtable <-
     )
 
   # create the widget
-  htmlwidgets::createWidget(
+  pt_widget <- createWidget(
     name = "pagedtable",
     x = pagedtable_list,
-    package = "pagedtable",
     ...,
-    width = width,
     height = height,
-    )
+    width = width,
+    package = "pagedtable")
+
+
+  pt_widget
 
 }
 
 
 #' @export
+#' @importFrom htmlwidgets shinyWidgetOutput
+
 pagedtableOutput <- function(outputId, width = "100%") {
-  shinyWidgetOutput(outputId, "pagedtable",width, package = "pagedtable")
+  shinyWidgetOutput(outputId, "pagedtable", width, package = "pagedtable")
 }
 
 #' @export
+#' @importFrom htmlwidgets shinyRenderWidget
 renderPagedTable <- function(expr, env = parent.frame(), quoted = FALSE){
   if (!quoted) {expr <- substitute(expr)}
   shinyRenderWidget(expr, pagedtableOutput, env, quoted = TRUE)
 }
-
-
-

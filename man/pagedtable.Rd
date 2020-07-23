@@ -7,11 +7,11 @@
 pagedtable(
   x,
   ...,
-  use_rownames = getOption("pagedtable.rownames.print"),
   width = "100\%",
-  height = "400px",
+  height = "auto",
+  use_rownames = getOption("pagedtable.rownames.print"),
   pagerows = 10,
-  shadowDOM = FALSE
+  shadowDOM = TRUE
 )
 }
 \arguments{
@@ -19,11 +19,19 @@ pagedtable(
 
 \item{...}{arguments to be passed to \code{\link{format}}}
 
+\item{width}{Fixed width for widget (in css units). The default is
+\code{NULL}, which results in intelligent automatic sizing based on the
+widget's container.}
+
+\item{height}{Fixed height for widget (in css units). The default is
+\code{NULL}, which results in intelligent automatic sizing based on the
+widget's container.}
+
 \item{use_rownames}{should rownames be displayed}
 
 \item{pagerows}{rows to display}
 
-\item{shadowDOM}{to or not use shadowdom}
+\item{shadowDOM}{to or not use shadowDOM. Default to TRUE}
 }
 \value{
 pagedtable htmlwidget
