@@ -157,6 +157,7 @@ if (!Array.prototype.map) {
 //# sourceMappingURL=purify.min.js.map
 
 var pagedTableStyle = "\
+\
 .pagedtable {\
   overflow: none;\
   padding-left: 8px;\

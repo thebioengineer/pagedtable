@@ -1,4 +1,5 @@
 #' Generate JSON for pagedtable
+#' @export
 #'
 #' @description pagedtable accepts a json that defines the behavior of pagedtable
 #' with the data including: nrows, column names, labels, etc. This function
@@ -17,11 +18,13 @@
 #' pagedtable_input <- pagedtable_json(mtcars)
 #'
 #' @importFrom jsonlite toJSON
-#' @noRd
 pagedtable_json <- function(x,
                             ...,
                             use_rownames = getOption("pagedtable.rownames.print"),
-                            pagerows = 10,
+                            pagerows_min = 10,
+                            pagerows_max = 100,
+                            pagecols_min = 1,
+                            pagecols_max = 100,
                             shadowDOM = TRUE) {
 
 
@@ -59,7 +62,14 @@ pagedtable_json <- function(x,
   names(columns) <- NULL
 
   options = list(
-    "rows" =  list(min = pagerows),
+    "cols" = list(
+      min = pagecols_min,
+      max = pagecols_max
+    ),
+    "rows" = list(
+      min = pagerows_min,
+      max = pagerows_max
+      ),
     "shadowDOM" = shadowDOM
   )
 

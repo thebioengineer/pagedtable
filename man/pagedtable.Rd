@@ -11,7 +11,8 @@ pagedtable(
   height = "auto",
   use_rownames = getOption("pagedtable.rownames.print"),
   pagerows = 10,
-  shadowDOM = TRUE
+  shadowDOM = TRUE,
+  output = c("widget", "html")
 )
 }
 \arguments{

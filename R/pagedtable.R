@@ -23,11 +23,11 @@ pagedtable <-
            ...,
            width = "100%",
            height = "auto",
-           use_rownames = getOption("pagedtable.rownames.print"),
-           pagerows = 10,
            shadowDOM = TRUE) {
 
   stopifnot(inherits(x, "data.frame"))
+
+  output <- match.arg(output)
 
   x <- head(x, n = getOption("pagedtable.max.print", 1000))
 
@@ -36,22 +36,20 @@ pagedtable <-
       x,
       ...,
       use_rownames = use_rownames,
-      pagerows = pagerows,
       shadowDOM = shadowDOM
     )
 
   # create the widget
-  pt_widget <- createWidget(
+  createWidget(
     name = "pagedtable",
     x = pagedtable_list,
-    ...,
     height = height,
     width = width,
+    sizingPolicy = htmlwidgets::sizingPolicy(
+      knitr.figure = FALSE, knitr.defaultWidth = "100%", knitr.defaultHeight = "auto",
+      padding = 10
+    ),
     package = "pagedtable")
-
-
-  pt_widget
-
 }
 
 
