@@ -18,10 +18,8 @@ library(pagedtable)
 ```{r}
 
 pagedtable(x = mtcars)
-pagedtable(x = mtcars, pagerows = 10, height = "100%")
-htmltools::HTML(pagedtable(x = mtcars, output = "html", shadowDOM = FALSE))
 
-mtcars
+pagedtable(x = mtcars[1:13,], pagerows)
 
 ```
 

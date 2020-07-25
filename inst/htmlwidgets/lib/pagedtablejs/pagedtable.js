@@ -157,7 +157,6 @@ if (!Array.prototype.map) {
 //# sourceMappingURL=purify.min.js.map
 
 var pagedTableStyle = "\
-\
 .pagedtable {\
   overflow: none;\
   padding-left: 8px;\
@@ -390,7 +389,6 @@ var PagedTable = function (pagedTable, source) {
     }
 
     //populate columns with missing columns info
-
     var keys = Object.keys(source.data[0]);
     if(source.columns.length != keys.length){
       var existingKeys = []
@@ -589,11 +587,6 @@ var PagedTable = function (pagedTable, source) {
         rowStart = 0;
 
       return rowStart;
-    };
-
-    me.getRowEnd = function() {
-      var rowStart = me.getRowStart();
-      return rowStart + me.rows;
     };
 
     me.getRowEnd = function() {
@@ -1365,7 +1358,7 @@ var PagedTable = function (pagedTable, source) {
     drawTableShellContents();
   };
 
-  me.addTableContents = function(startCol, backwards){
+   me.addTableContents = function(startCol, backwards){
 
     if (tableDiv.clientWidth > 0) {
       tableDiv.style.opacity = 1;
@@ -1387,7 +1380,8 @@ var PagedTable = function (pagedTable, source) {
 
       //If we know the width of the element, and it will be too wide, nah dog, break out of this loop
 
-      if (tableDiv.clientWidth - tableDivPadding < currentWidth) {
+      if ((tableDiv.clientWidth - tableDivPadding < currentWidth) &
+             (visibleColumns.length >= options.columns.min)) {
         break;
       }
 
@@ -1405,7 +1399,8 @@ var PagedTable = function (pagedTable, source) {
         currentWidth = currentWidth + columnWidth[0]
         columns.setColWidth(columnNumber, columnWidth[0]);
 
-        if (tableDiv.clientWidth - tableDivPadding < currentWidth) {
+        if ((tableDiv.clientWidth - tableDivPadding < currentWidth) &
+             (visibleColumns.length >= options.columns.min)) {
           // we need to hide the column that is too wide
           // hiding prevents having to re-generate
           me.toggleColumn("col_" + columnNumber);
@@ -1415,6 +1410,8 @@ var PagedTable = function (pagedTable, source) {
       }
 
       visibleColumns.push(columnNumber)
+
+
 
       // dont try to add more fields columns than exist
       if( columnNumber  === 0 ) {
@@ -1447,12 +1444,16 @@ var PagedTable = function (pagedTable, source) {
         };
       }
 
+      if(visibleColumns.length === options.columns.max){
+        break
+      }
 
       if(backwards){
         columnNumber -= 1;
       } else {
         columnNumber += 1;
       }
+
     }
 
     if(backwards){

@@ -5,10 +5,7 @@
 #' @importFrom utils head
 #'
 #' @param x data.frame to be passed to pagedtable
-#' @param ... arguments to be passed to \code{\link{format}}
-#' @param use_rownames should rownames be displayed
-#' @param pagerows rows to display
-#' @param shadowDOM to or not use shadowDOM. Default to TRUE
+#' @param ... arguments to be passed to \code{\link{pagedtable_json}}
 #' @inheritParams htmlwidgets::createWidget
 #'
 #' @return pagedtable htmlwidget
@@ -18,12 +15,13 @@
 #'   pagedtable(mtcars)
 #' }
 #'
+#' @rdname pagedtable
+#'
 pagedtable <-
   function(x,
            ...,
            width = "100%",
-           height = "auto",
-           shadowDOM = TRUE) {
+           height = "auto") {
 
   stopifnot(inherits(x, "data.frame"))
 
@@ -34,9 +32,7 @@ pagedtable <-
   pagedtable_list <-
     pagedtable_json(
       x,
-      ...,
-      use_rownames = use_rownames,
-      shadowDOM = shadowDOM
+      ...
     )
 
   # create the widget
@@ -53,13 +49,32 @@ pagedtable <-
 }
 
 
+
+
+
+#' Shiny bindings for pagedtable
+#'
+#' Output and render functions for using %s within Shiny
+#' applications and interactive Rmd documents.
+#'
+#' @param outputId output variable to read from
+#' @param width,height Must be a valid CSS unit (like \code{'100\%'},
+#'   \code{'400px'}, \code{'auto'}) or a number, which will be coerced to a
+#'   string and have \code{'px'} appended.
+#' @param expr An expression that generates a pagedtable
+#' @param env The environment in which to evaluate \code{expr}.
+#' @param quoted Is \code{expr} a quoted expression (with \code{quote()})? This
+#'   is useful if you want to save an expression in a variable.
+#'
+#' @name pagedtable-shiny
+#'
 #' @export
 #' @importFrom htmlwidgets shinyWidgetOutput
-
-pagedtableOutput <- function(outputId, width = "100%") {
-  shinyWidgetOutput(outputId, "pagedtable", width, package = "pagedtable")
+pagedtableOutput <- function(outputId, width = "100%", height = 'auto') {
+  shinyWidgetOutput(outputId, "pagedtable", width = width, height = height, package = "pagedtable")
 }
 
+#' @rdname pagedtable-shiny
 #' @export
 #' @importFrom htmlwidgets shinyRenderWidget
 renderPagedTable <- function(expr, env = parent.frame(), quoted = FALSE){

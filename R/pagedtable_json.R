@@ -1,4 +1,5 @@
 #' Generate JSON for pagedtable
+#' @rdname pagedtable
 #' @export
 #'
 #' @description pagedtable accepts a json that defines the behavior of pagedtable
@@ -6,12 +7,18 @@
 #' accepts the data.frame to print and generates the json for paged table
 #'
 #' @param x data.frame to show in the pagedtable
-#' @param ... arguments to be passed to \link{\code{format}}
+#' @param ... arguments to be passed to \code{\link{format}}
 #' @param use_rownames boolean value. should rownames be used?
-#' @param pagerows integer value defining the number of rows to display for
+#' @param pagerows_min integer value defining the minimum number of rows to display for
 #' each page of the pagedtable
-#' @param shadowDOM boolean value, should the shadowDOM be used? defaults
-#' to yes.
+#' @param pagerows_max integer value defining the maximum number of rows to display for
+#' each page of the pagedtable to fill the height of the widget it is in.
+#' @param pagecols_min integer value defining the minimum number of columns to display for
+#' each page of the pagedtable
+#' @param pagecols_max integer value defining the maximum number of columns to display for
+#' each page of the pagedtable to fill the width of the widget it is in.
+#' @param shadowDOM boolean value, should the shadowDOM be used? defaults to TRUE.
+#'
 #'
 #' @return list object with three entries: data, columns, and options
 #' @examples
