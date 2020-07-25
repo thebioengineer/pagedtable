@@ -6,36 +6,42 @@ editor_options:
   chunk_output_type: inline
 ---
 
-```{r}
+```{r, message = FALSE}
 
 library(dplyr)
 library(colortable)
+
+## remotes::install_github("thebioengineer/pagedtable")
 library(pagedtable)
 
 ```
 
 
 ```{r}
-
+#default widget
 pagedtable(x = mtcars)
 
-pagedtable(x = mtcars[1:13,], pagerows)
+# set nrows displayed to 7
+pagedtable(x = mtcars, pagerows_min = 7)
 
 ```
 
 
 ```{r}
+
+# add a special vector, based on vctrs that returns HTML
 mtcars2 <- mtcars
 mtcars2$mpg <- color_vctr(mtcars2$mpg, text_color = color_scale("Blues"))
-pagedtable(mtcars2, pagerows = 10)
-pagedtable(mtcars2, pagerows = 10)
-mtcars2
 
+# problem is, it didnt realize it needed to treat my field like it was html!
+pagedtable(mtcars2, pagerows = 10)
 ```
 
 ```{r}
 
-## create new method for your class
+## create a pagedtable_col method for your class, and set the html setting for the 
+## column to be TRUE, voila! On rendering of the column it will to render 
+## the html!
 
 pagedtable_col.color_vctr <- function(x, name = substitute(x), ...) {
   col_values <- format(x, ..., method = "html")
@@ -55,6 +61,6 @@ pagedtable_col.color_vctr <- function(x, name = substitute(x), ...) {
   )
 }
 
-pagedtable(mtcars2, pagerows = 10)
+pagedtable(mtcars2, pagerows_min = 10)
 
 ```

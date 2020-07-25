@@ -25,8 +25,6 @@ pagedtable <-
 
   stopifnot(inherits(x, "data.frame"))
 
-  output <- match.arg(output)
-
   x <- head(x, n = getOption("pagedtable.max.print", 1000))
 
   pagedtable_list <-
